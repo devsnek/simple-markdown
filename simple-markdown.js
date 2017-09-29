@@ -44,7 +44,8 @@
  * THE SOFTWARE.
  */
 (function() {
-
+var SimpleMarkdown = {};
+    
 var CR_NEWLINE_R = /\r\n?/g;
 var TAB_R = /\t/g;
 var FORMFEED_R = /\f/g
@@ -345,7 +346,7 @@ var reactElement = function(element) {
 //   eg. { "href": "http://google.com" }. Falsey attributes are filtered out.
 // isClosed: boolean that controls whether tag is closed or not (eg. img tags).
 //   defaults to true
-var htmlTag = function(tagName, content, attributes, isClosed) {
+SimpleMarkdown.htmlTag = function(tagName, content, attributes, isClosed) {
     attributes = attributes || {};
     isClosed = typeof isClosed !== 'undefined' ? isClosed : true;
 
@@ -624,7 +625,7 @@ var defaultRules = {
             });
         },
         html: function(node, output, state) {
-            return htmlTag("h" + node.level, output(node.content, state));
+            return SimpleMarkdown.htmlTag("h" + node.level, output(node.content, state));
         }
     },
     nptable: {
@@ -701,10 +702,10 @@ var defaultRules = {
                 "markdown-code-" + node.lang :
                 undefined;
 
-            var codeBlock = htmlTag("code", node.content, {
+            var codeBlock = SimpleMarkdown.htmlTag("code", node.content, {
                 class: className
             });
-            return htmlTag("pre", codeBlock);
+            return SimpleMarkdown.htmlTag("pre", codeBlock);
         }
     },
     fence: {
@@ -738,7 +739,7 @@ var defaultRules = {
             });
         },
         html: function(node, output, state) {
-            return htmlTag("blockquote", output(node.content, state));
+            return SimpleMarkdown.htmlTag("blockquote", output(node.content, state));
         }
     },
     list: {
@@ -863,14 +864,14 @@ var defaultRules = {
         },
         html: function(node, output, state) {
             var listItems = node.items.map(function(item) {
-                return htmlTag("li", output(item, state));
+                return SimpleMarkdown.htmlTag("li", output(item, state));
             }).join("");
 
             var listTag = node.ordered ? "ol" : "ul";
             var attributes = {
                 start: node.start
             };
-            return htmlTag(listTag, listItems, attributes);
+            return SimpleMarkdown.htmlTag(listTag, listItems, attributes);
         }
     },
     def: {
@@ -1018,23 +1019,23 @@ var defaultRules = {
             };
 
             var headers = node.header.map(function(content, i) {
-                return htmlTag("th", output(content, state),
+                return SimpleMarkdown.htmlTag("th", output(content, state),
                     { style: getStyle(i), scope: "col" });
             }).join("");
 
             var rows = node.cells.map(function(row) {
                 var cols = row.map(function(content, c) {
-                    return htmlTag("td", output(content, state),
+                    return SimpleMarkdown.htmlTag("td", output(content, state),
                         { style: getStyle(c) });
                 }).join("");
 
-                return htmlTag("tr", cols);
+                return SimpleMarkdown.htmlTag("tr", cols);
             }).join("");
 
-            var thead = htmlTag("thead", htmlTag("tr", headers));
-            var tbody = htmlTag("tbody", rows);
+            var thead = SimpleMarkdown.htmlTag("thead", SimpleMarkdown.htmlTag("tr", headers));
+            var tbody = SimpleMarkdown.htmlTag("tbody", rows);
 
-            return htmlTag("table", thead + tbody);
+            return SimpleMarkdown.htmlTag("table", thead + tbody);
         }
     },
     newline: {
@@ -1063,7 +1064,7 @@ var defaultRules = {
             var attributes = {
                 class: 'paragraph'
             };
-            return htmlTag("div", output(node.content, state), attributes);
+            return SimpleMarkdown.htmlTag("div", output(node.content, state), attributes);
         }
     },
     escape: {
@@ -1159,7 +1160,7 @@ var defaultRules = {
                 title: node.title
             };
 
-            return htmlTag("a", output(node.content, state), attributes);
+            return SimpleMarkdown.htmlTag("a", output(node.content, state), attributes);
         }
     },
     image: {
@@ -1195,7 +1196,7 @@ var defaultRules = {
                 title: node.title
             };
 
-            return htmlTag("img", "", attributes, false);
+            return SimpleMarkdown.htmlTag("img", "", attributes, false);
         }
     },
     reflink: {
@@ -1271,7 +1272,7 @@ var defaultRules = {
             });
         },
         html: function(node, output, state) {
-            return htmlTag("em", output(node.content, state));
+            return SimpleMarkdown.htmlTag("em", output(node.content, state));
         }
     },
     strong: {
@@ -1294,7 +1295,7 @@ var defaultRules = {
             });
         },
         html: function(node, output, state) {
-            return htmlTag("strong", output(node.content, state));
+            return SimpleMarkdown.htmlTag("strong", output(node.content, state));
         }
     },
     u: {
@@ -1317,7 +1318,7 @@ var defaultRules = {
             });
         },
         html: function(node, output, state) {
-            return htmlTag("u", output(node.content, state));
+            return SimpleMarkdown.htmlTag("u", output(node.content, state));
         }
     },
     del: {
@@ -1336,7 +1337,7 @@ var defaultRules = {
             });
         },
         html: function(node, output, state) {
-            return htmlTag("del", output(node.content, state));
+            return SimpleMarkdown.htmlTag("del", output(node.content, state));
         }
     },
     inlineCode: {
@@ -1359,7 +1360,7 @@ var defaultRules = {
             });
         },
         html: function(node, output, state) {
-            return htmlTag("code", node.content);
+            return SimpleMarkdown.htmlTag("code", node.content);
         }
     },
     br: {
@@ -1445,7 +1446,7 @@ var defaultImplicitParse = function(source) {
 var defaultReactOutput = reactFor(ruleOutput(defaultRules, "react"));
 var defaultHtmlOutput = htmlFor(ruleOutput(defaultRules, "html"));
 
-var SimpleMarkdown = {
+Object.assign(SimpleMarkdown, {
     defaultRules: defaultRules,
     parserFor: parserFor,
     ruleOutput: ruleOutput,
@@ -1474,7 +1475,7 @@ var SimpleMarkdown = {
     defaultParse: defaultImplicitParse,
     outputFor: reactFor,
     defaultOutput: defaultReactOutput,
-};
+});
 
 if (typeof module !== "undefined" && module.exports) {
     module.exports = SimpleMarkdown;
