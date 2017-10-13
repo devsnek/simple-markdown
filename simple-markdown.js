@@ -1341,7 +1341,7 @@ var defaultRules = {
         }
     },
     inlineCode: {
-        match: inlineRegex(/^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/),
+        match: inlineRegex(/^(`)\s*([\s\S]*?[^`])\s*\1(?!`)/),
         parse: function(capture, parse, state) {
             return {
                 content: capture[2]
