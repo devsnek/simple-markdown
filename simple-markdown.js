@@ -709,7 +709,7 @@ var defaultRules = {
         }
     },
     fence: {
-        match: blockRegex(/^ *(`{3,}|~{3,}) *(\S+)? *\n([\s\S]+?)\s*\1 *(?:\n *)+\n/),
+        match: blockRegex(/^ *(`{3,}|~{3,}) *(\S+)? *\n([\s\S]+?)\s*\1 *(?:\n *)+/),
         parse: function(capture, parse, state) {
             return {
                 type: "codeBlock",
